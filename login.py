@@ -1,24 +1,17 @@
-import requests
-from bs4 import BeautifulSoup
-
-def get_auth_token(html:str)->str:
-    soup=BeautifulSoup(html,'html.parser')
-    return soup.find(attrs={'name':'authenticity_token'}).get('value')
-
+from selenium import webdriver
+import chromedriver_binary
 
 username=''
 password=''
-payload={
-    'session[username_or_email]':username
-    ,'session[password]':password
-    ,'return_to_ssl':'true'
-    ,'redirect_after_login':'/'
-}
 
-s=requests.Session()
-response=s.get('https://twitter.com/')
-authenticity_token=get_auth_token(response.text)
-payload['authenticity_token']=authenticity_token
-response = s.post('https://twitter.com/sessions', data=payload)
-response.raise_for_status()
-print(response.text)
+driver = webdriver.Chrome()
+driver.get('https://twitter.com/')
+
+input_tag_of_username = driver.find_element_by_name('session[username_or_email]')
+input_tag_of_username.send_keys(username)
+input_tag_of_password = driver.find_element_by_name('session[password]')
+input_tag_of_password.send_keys(password)
+input_tag_of_password.submit()
+
+
+
